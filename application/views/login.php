@@ -7,8 +7,10 @@
 
     /* --- Tampilan Default (Desktop / Tablet) --- */
     .bg-hero-custom {
-        background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.82) 0%, rgba(2, 110, 99, 0.75) 100%),
-            url('<?= base_url("public/settings/logo/beckground_slider.png"); ?>');
+        /* background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
+            url('<?= base_url("public/settings/logo/beckground_slider.png"); ?>'); */
+        background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
+            url('https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780581756/beckground_slider_pepvyd.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -95,7 +97,7 @@
 
             <div class="login-box-modern">
 
-                <img src="<?= base_url('public/settings/logo/belum_login.png'); ?>" alt="Ilustrasi Belum Login" class="img-illustration">
+                <img src="https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780581879/belum_login_ytu5pc.png" alt="Ilustrasi Belum Login" class="img-illustration">
 
                 <div class="mb-4">
                     <p class="fs-5 fw-medium mb-1">Akses Terbatas</p>
