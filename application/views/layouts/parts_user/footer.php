@@ -135,16 +135,19 @@
                 </ul>
 
                 <div class="d-flex justify-content-center justify-content-lg-start gap-2 pt-2">
-                    <a href="#" class="social-btn" title="Instagram">
+                    <a href="https://wa.me/6281113102256" class="social-btn" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.instagram.com/polkesjakarta3?igsh=dXNzNHVjYjQyNWk3" class="social-btn" title="Instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="social-btn" title="YouTube">
+                    <a href="https://www.youtube.com/channel/UChzyWfEnnmomSdNLkt6Iutw" class="social-btn" title="YouTube">
                         <i class="fab fa-youtube"></i>
                     </a>
-                    <a href="#" class="social-btn" title="Facebook">
+                    <a href="https://web.facebook.com/POLTEKKES.JAKARTA3?_rdc=1&_rdr#" class="social-btn" title="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="social-btn" title="Website Resmi">
+                    <a href="https://www.poltekkesjakarta3.ac.id" class="social-btn" title="Website Resmi">
                         <i class="fas fa-globe"></i>
                     </a>
                 </div>
