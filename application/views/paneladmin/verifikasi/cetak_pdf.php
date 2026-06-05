@@ -48,7 +48,7 @@
 
         table th,
         table td {
-            padding: 8px;
+            padding: 3px;
             vertical-align: top;
         }
 
@@ -140,7 +140,7 @@
         </tr>
     </table>
 
-    <p style="margin-top: 30px;">Dokumen ini merupakan tanda bukti resmi persetujuan kunjungan. Harap dicetak atau ditunjukkan secara digital kepada petugas keamanan / resepsionis saat tiba di lokasi.</p>
+    <p style="margin-top: 30px;">Dokumen ini merupakan tanda bukti resmi persetujuan kunjungan. Harap dicetak sebagai bukti kunjungan dari pemohon.</p>
 
     <div class="footer">
         <p>Disetujui pada tanggal: <?= date('d F Y', strtotime($row->updated_at)); ?></p>

@@ -126,7 +126,7 @@
                     </li>
                     <li>
                         <i class="fas fa-phone-alt text-white"></i>
-                        <span>(021) 8497 8693</span>
+                        <span>(021) 84978693</span>
                     </li>
                     <li>
                         <i class="fas fa-envelope text-white"></i>

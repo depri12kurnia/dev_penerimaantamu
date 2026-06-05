@@ -7,6 +7,8 @@ class Dashboard extends CI_Controller
     {
         parent::__construct();
         $this->load->model('M_settings');
+        $this->load->model('M_dashboard');
+
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login');
         }
@@ -14,10 +16,9 @@ class Dashboard extends CI_Controller
 
     public function index()
     {
+        $data['summary'] = $this->M_dashboard->get_summary();
+        $data['approved_reservations'] = $this->M_dashboard->get_approved_reservations();
 
-        // ==================
-        // GENERAL
-        // ==================
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Dashboard | Admin Panel';
         $data['content'] = 'paneladmin/dashboard';

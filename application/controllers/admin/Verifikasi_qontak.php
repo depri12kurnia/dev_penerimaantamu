@@ -56,9 +56,18 @@ class Verifikasi extends CI_Controller
 
             $row[] = $verification->created_at;
 
+            // 1. Buat variabel penampung dan isi dengan tombol default (Verify)
+            $action_buttons = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Verify" onclick="viewVerification(\'' . $verification->id . '\')"><i class="fa fa-eye"></i></a>';
 
-            $row[] = '<a class="btn btn-primary btn-sm" href="javascript:void(0)" title="Verify" onclick="viewVerification(' . "'" . $verification->id . "'" . ')"><i class="fa fa-eye"></i></a>
-                      ';
+            // 2. Cek kondisi status
+            if ($verification->status == 'approved') {
+                // Jika approve, tambahkan (concatenate) tombol Print ke dalam variabel yang sama
+                // Perhatikan penggunaan .= untuk menyambung string
+                $action_buttons .= ' <a class="btn btn-info btn-sm" href="javascript:void(0)" title="Print" onclick="printReservation(\'' . $verification->id . '\')"><i class="fa fa-print"></i></a>';
+            }
+
+            // 3. Masukkan hasil akhirnya ke dalam array $row
+            $row[] = $action_buttons;
             $data[] = $row;
         }
 
@@ -342,5 +351,62 @@ class Verifikasi extends CI_Controller
             ]);
             exit();
         }
+    }
+
+    public function cetak_pdf($id)
+    {
+        // 1. Pastikan user sudah login (opsional, sesuaikan dengan sistem auth Anda)
+        if (!$this->ion_auth->logged_in()) {
+            redirect('auth/login', 'refresh');
+        }
+
+        // 2. Ambil data reservasi dari database
+        $reservation = $this->M_verifikasi->get_reservation_by_id($id);
+
+        // 3. Validasi data
+        if (!$reservation) {
+            show_404(); // Tampilkan halaman 404 jika ID tidak ditemukan
+        }
+
+        // Keamanan ekstra: Pastikan hanya status 'approved' yang bisa dicetak
+        if ($reservation->status !== 'approved') {
+            // Tampilkan pesan error jika status bukan approved
+            die("<h3>Akses Ditolak: Dokumen ini belum disetujui atau dibatalkan.</h3>");
+        }
+
+        // 4. Siapkan data untuk dikirim ke view PDF
+        $data['row'] = $reservation;
+
+        // 5. Load file HTML yang akan dijadikan PDF ke dalam variabel
+        // (Kita akan buat file v_pdf_reservasi.php di step selanjutnya)
+        $html = $this->load->view('paneladmin/verifikasi/cetak_pdf', $data, TRUE);
+
+        // =========================================================================
+        // 6. PROSES RENDER PDF (MENGGUNAKAN DOMPDF)
+        // =========================================================================
+
+        // Catatan: Jika Anda sudah menginstal Dompdf via Composer, 
+        // pastikan autoload composer sudah aktif di config.php ( $config['composer_autoload'] = TRUE; )
+
+        // Inisialisasi Dompdf
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true); // Aktifkan jika view memuat gambar dari URL/Asset
+
+        $dompdf = new \Dompdf\Dompdf($options);
+
+        // Masukkan HTML ke Dompdf
+        $dompdf->loadHtml($html);
+
+        // Atur ukuran dan orientasi kertas (A4, portrait)
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render HTML ke PDF
+        $dompdf->render();
+
+        // Format nama file saat di-download
+        $nama_file = "Bukti_Kunjungan_" . $reservation->no_ticket . ".pdf";
+
+        // Output PDF ke browser (Attachment => 0 berarti preview di tab baru, bukan langsung download)
+        $dompdf->stream($nama_file, array("Attachment" => 0));
     }
 }

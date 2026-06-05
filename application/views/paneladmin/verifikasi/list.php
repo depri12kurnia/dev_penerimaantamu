@@ -451,4 +451,18 @@
             verifyReservasi(id, status, comment);
         });
     });
+
+    // cetak reservasi
+    function printReservation(id) {
+        if (!id) {
+            alert("ID Reservasi tidak valid.");
+            return;
+        }
+        // Arahkan ke URL controller untuk cetak PDF, parameter ID disisipkan
+        // Sesuaikan 'admin/verifikasi/cetak_pdf' dengan route/struktur folder Anda
+        var printUrl = "<?= base_url('admin/verifikasi/cetak_pdf/') ?>" + id;
+
+        // Buka PDF di tab baru
+        window.open(printUrl, '_blank');
+    }
 </script>
