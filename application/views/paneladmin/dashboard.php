@@ -2,7 +2,6 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
@@ -50,7 +49,7 @@
 
             <div class="col-md-12">
                 <!-- Gunakan card-outline agar terlihat lebih elegan di AdminLTE 3 -->
-                <div class="card card-primary card-outline">
+                <div class="card card-info">
                     <div class="card-header border-0">
                         <h3 class="card-title font-weight-bold mt-1" id="monthYearDisplay">Memuat Kalender...</h3>
 
@@ -66,6 +65,47 @@
                     <div class="card-body p-0">
                         <!-- Elemen Kontainer Kalender Utama -->
                         <div id="calendarBody" class="w-100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIE Chart & Bar Chart -->
+            <div class="col-md-6">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Klasifikasi Instansi Tamu</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Statistik Kunjungan <?= date('Y') ?></h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -299,4 +339,65 @@
     $(document).ready(function() {
         renderCalendar();
     });
+</script>
+
+<script>
+    $(function() {
+        // Ambil string JSON dari PHP controller
+        var donutData = <?= $pie_chart_data ?>;
+        var areaChartData = <?= $bar_chart_data ?>;
+
+        //-------------
+        //- PIE CHART -
+        //-------------
+        var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+        var pieOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+        }
+
+        // Render Pie Chart
+        new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: donutData,
+            options: pieOptions
+        })
+
+        //-------------
+        //- BAR CHART -
+        //-------------
+        var barChartCanvas = $('#barChart').get(0).getContext('2d')
+        var barChartData = $.extend(true, {}, areaChartData)
+
+        // Swap dataset (karena dari controller dataset[0] adalah Pending, dataset[1] adalah Approved)
+        // Swap ini membuat warna biru (Approved) tampil di depan/kiri bar
+        var temp0 = areaChartData.datasets[0]
+        var temp1 = areaChartData.datasets[1]
+        var temp2 = areaChartData.datasets[2]
+
+        barChartData.datasets[0] = temp1
+        barChartData.datasets[1] = temp0
+        barChartData.datasets[2] = temp2
+
+        var barChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetFill: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        precision: 0 // Pastikan angka Y axis bernilai bulat (bukan 0.5)
+                    }
+                }]
+            }
+        }
+
+        // Render Bar Chart
+        new Chart(barChartCanvas, {
+            type: 'bar',
+            data: barChartData,
+            options: barChartOptions
+        })
+    })
 </script>

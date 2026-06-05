@@ -371,10 +371,10 @@
                 <tbody>
                     <tr><th width="35%">Nama Instansi</th><td><strong>${event.nama_instansi}</strong></td></tr>
                     <tr><th>Nama Pemohon</th><td>${event.nama_pemohon}</td></tr>
-                    <tr><th>Waktu</th><td><span class="badge bg-dark">${event.tanggal_berkunjung}</span> Jam ${event.jam_kunjungan} WIB</td></tr>
+                    <tr><th>Waktu</th><td>${event.tanggal_berkunjung} Jam ${event.jam_kunjungan} WIB</td></tr>
                     <tr><th>Jumlah Peserta</th><td>${event.jumlah_peserta} Orang</td></tr>
                     <tr><th>Lokasi Pertemuan</th><td>${event.lokasi}</td></tr>
-                    <tr><th>Klasifikasi</th><td><span class="badge bg-secondary">${event.klasifikasi}</span></td></tr>
+                    <tr><th>Klasifikasi</th><td>${event.klasifikasi}</td></tr>
                 </tbody>
             </table>
         `;

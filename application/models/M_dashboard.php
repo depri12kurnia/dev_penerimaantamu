@@ -34,4 +34,32 @@ class M_dashboard extends CI_Model
         $this->db->order_by('jam_kunjungan', 'ASC'); // Urutkan berdasarkan jam berkunjung
         return $this->db->get()->result();
     }
+
+    // Data untuk Pie Chart: Total Kunjungan Berdasarkan Klasifikasi
+    public function get_chart_klasifikasi()
+    {
+        $this->db->select('klasifikasi, COUNT(id) as total');
+        $this->db->from('reservations');
+        $this->db->group_by('klasifikasi');
+        return $this->db->get()->result();
+    }
+
+    // Data untuk Bar Chart: Total Kunjungan per Bulan (Approved vs Pending vs Rejected) Tahun Ini
+    public function get_chart_kunjungan_bulanan()
+    {
+        $tahun_ini = date('Y');
+        // Filter tanggal tidak null untuk menghindari error bulan
+        $query = $this->db->query("
+            SELECT 
+                MONTH(tanggal_berkunjung) as bulan, 
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as total_approved,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as total_pending,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as total_rejected
+            FROM reservations 
+            WHERE YEAR(tanggal_berkunjung) = '$tahun_ini' AND tanggal_berkunjung IS NOT NULL
+            GROUP BY MONTH(tanggal_berkunjung)
+            ORDER BY MONTH(tanggal_berkunjung) ASC
+        ");
+        return $query->result();
+    }
 }
