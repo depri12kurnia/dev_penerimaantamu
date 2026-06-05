@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top py-3">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo base_url('/'); ?>">
-            <img src="<?php echo base_url(); ?>public/settings/logo/logo.png" alt="Logo" width="280">
+            <img src="https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780477117/Logo_With_BLU_hkmvd9.png" alt="Logo" width="280">
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto gap-2 align-items-center mt-3 mt-lg-0">
                 <li class="nav-item">
-                    <a href="<?php echo base_url('beranda'); ?>">
+                    <a href="<?php echo base_url('/'); ?>">
                         <button class="btn nav-link-custom <?= ($this->uri->segment(1) == 'beranda')  ? 'active' : ''; ?>">BERANDA</button>
                     </a>
                 </li>

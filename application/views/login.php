@@ -10,14 +10,14 @@
         /* background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
             url('<?= base_url("public/settings/logo/beckground_slider.png"); ?>'); */
         background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
-            url('https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780581756/beckground_slider_pepvyd.png');
+            url('https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780620857/beckground_slider__jadwal_laz92j.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         /* border-radius: 0 0 64px 64px; */
         /* Dikembalikan agar konsisten melengkung */
         padding: 100px 20px;
-        min-height: 500px;
+        min-height: 800px;
         /* Ditambah sedikit ruang vertikal agar card bernapas */
         display: flex;
         align-items: center;
@@ -32,16 +32,16 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 24px;
         padding: 2.5rem 2rem;
-        max-width: 450px;
+        max-width: 650px;
         margin: 0 auto;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     /* Mengatur ilustrasi agar ukurannya pas & ideal */
     .img-illustration {
-        max-width: 400px;
+        max-width: 550px;
         height: auto;
-        margin: 0 auto 1.5rem auto;
+        margin: 0 auto 0 auto;
         display: block;
         border-radius: 24px;
     }

@@ -125,7 +125,7 @@ class Reservasi extends CI_Controller
         if ($insert_id) {
             $this->load->library('qontak');
 
-            $nomor_admin = '6281220094931'; // Nomor WA Admin
+            $nomor_admin = '6281220094931'; // Nomor WA Admin Penerimaan Reservasi Tamu (gunakan format internasional tanpa tanda +)
             $nama_admin  = 'Admin Penerimaan Reservasi Tamu'; // Nama penerima di sistem Qontak
 
             // Ambil data langsung dari $payload dan pastikan tidak kosong (fallback '-')
@@ -133,7 +133,7 @@ class Reservasi extends CI_Controller
             $nama_instansi    = $payload['nama_instansi'];
             $no_ticket_wa = $no_ticket;
 
-            $template_id  = 'fffbc9f6-c8ea-4b3c-8aef-63eabc436857'; // Ganti dengan ID Template Admin
+            $template_id  = 'fffbc9f6-c8ea-4b3c-8aef-63eabc436857'; // Ganti dengan ID Template untuk Admin
             $isi_variabel = [$nama_pemohon, $nama_instansi, $no_ticket_wa];
 
             // Format parameter untuk Qontak

@@ -10,7 +10,7 @@
         /* background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
             url('<?= base_url("public/settings/logo/beckground_slider.png"); ?>'); */
         background-image: linear-gradient(180deg, rgba(1, 84, 78, 0.75) 0%, rgba(2, 110, 99, 0.65) 100%),
-            url('https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780581756/beckground_slider_pepvyd.png');
+            url('https://res.cloudinary.com/dmi0wyye1/image/upload/q_auto/f_auto/v1780588454/beckground_slider__jadwal_ijlzym.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -55,7 +55,7 @@
                 Informasi ketersediaan waktu studi banding atau kunjungan kerja dinas
             </h4>
 
-            <p class="lead opacity-75 mb-0">
+            <p class="lead opacity-75 mb-0" style="color: var(--pk-white-bg); font-size: 1.50rem;">
                 Reservasi tamu online dalam satu platform
             </p>
         </div>
@@ -362,24 +362,30 @@
 
     // Fungsi menampilkan detail spesifik satu baris data reservasi
     function showEventDetail(eventId) {
-        const event = approvedReservations.find(r => r.id === eventId);
+        // Gunakan == alih-alih === jika ada potensi perbedaan tipe data (String vs Integer) dari HTML onclick
+        const event = approvedReservations.find(r => r.id == eventId);
+
         if (event) {
             let html = `
-                <table class="table table-striped table-bordered mb-0" style="font-size: 0.9rem;">
-                    <tbody>
-                        <tr><th width="35%">Nama Instansi</th><td><strong>${event.nama_instansi}</strong></td></tr>
-                        <tr><th>Nama Pemohon</th><td>${event.nama_pemohon}</td></tr>
-                        <tr><th>Waktu</th><td><span class="badge bg-dark">${event.tanggal_berkunjung}</span> Jam ${event.jam_kunjungan} WIB</td></tr>
-                        <tr><th>Jumlah Peserta</th><td>${event.jumlah_peserta} Orang</td></tr>
-                        <tr><th>Lokasi Pertemuan</th><td>${event.lokasi}</td></tr>
-                        <tr><th>Klasifikasi</th><td><span class="badge bg-secondary">${event.klasifikasi}</span></td></tr>
-                    </tbody>
-                </table>
-            `;
+            <table class="table table-striped table-bordered mb-0" style="font-size: 0.9rem;">
+                <tbody>
+                    <tr><th width="35%">Nama Instansi</th><td><strong>${event.nama_instansi}</strong></td></tr>
+                    <tr><th>Nama Pemohon</th><td>${event.nama_pemohon}</td></tr>
+                    <tr><th>Waktu</th><td><span class="badge bg-dark">${event.tanggal_berkunjung}</span> Jam ${event.jam_kunjungan} WIB</td></tr>
+                    <tr><th>Jumlah Peserta</th><td>${event.jumlah_peserta} Orang</td></tr>
+                    <tr><th>Lokasi Pertemuan</th><td>${event.lokasi}</td></tr>
+                    <tr><th>Klasifikasi</th><td><span class="badge bg-secondary">${event.klasifikasi}</span></td></tr>
+                </tbody>
+            </table>
+        `;
             document.getElementById('modalEventBody').innerHTML = html;
 
-            const myModal = new bootstrap.Modal(document.getElementById('modalEventDetail'));
+            // PERBAIKAN: Gunakan getOrCreateInstance agar tidak terjadi error penumpukan modal
+            const modalEl = document.getElementById('modalEventDetail');
+            const myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             myModal.show();
+        } else {
+            console.error("Data event tidak ditemukan untuk ID:", eventId);
         }
     }
 
@@ -391,22 +397,27 @@
         if (events.length > 0) {
             let html = `<p class="mb-3 text-muted">Ditemukan <strong>${events.length} acara</strong> pada tanggal ini. Klik salah satu untuk melihat detail:</p>`;
             html += `<div class="list-group">`;
+
             events.forEach(event => {
                 const badgeColor = klasifikasiColor[event.klasifikasi] || 'secondary';
+                // PERBAIKAN: Tambahkan tanda kutip '${event.id}' pada onclick
                 html += `
-                    <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" onclick="showEventDetail(${event.id})">
-                        <div>
-                            <h6 class="mb-1 fw-bold text-dark">${event.nama_instansi}</h6>
-                            <small class="text-secondary"><i class="far fa-clock me-1"></i> Pukul ${event.jam_kunjungan} WIB</small>
-                        </div>
-                        <span class="badge rounded-pill calendar-event-${badgeColor} text-white px-2 py-1" style="font-size:0.7rem;">${event.klasifikasi}</span>
-                    </button>
-                `;
+                <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" onclick="showEventDetail('${event.id}')">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">${event.nama_instansi}</h6>
+                        <small class="text-secondary"><i class="far fa-clock me-1"></i> Pukul ${event.jam_kunjungan} WIB</small>
+                    </div>
+                    <span class="badge rounded-pill calendar-event-${badgeColor} text-white px-2 py-1" style="font-size:0.7rem;">${event.klasifikasi}</span>
+                </button>
+            `;
             });
             html += `</div>`;
 
             document.getElementById('modalEventBody').innerHTML = html;
-            const myModal = new bootstrap.Modal(document.getElementById('modalEventDetail'));
+
+            // PERBAIKAN: Gunakan getOrCreateInstance
+            const modalEl = document.getElementById('modalEventDetail');
+            const myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             myModal.show();
         }
     }

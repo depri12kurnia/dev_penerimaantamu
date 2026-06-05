@@ -10,5 +10,4 @@ defined('BASEPATH') or exit('No direct script access allowed');
 // $config['qontak_access_token'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 // $config['qontak_channel_id']   = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
-// Config qontak.php
-// Token API Aplikasi Penerimaan Tamu
+// asli config qontak.php

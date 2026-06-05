@@ -16,7 +16,7 @@
         background-position: center;
         background-repeat: no-repeat;
         border-radius: 0 0 64px 64px;
-        padding: 160px 20px;
+        padding: 110px 20px;
         /* Menjaga ruang agar gambar background terlihat */
         min-height: 600px;
         /* Tinggi standar untuk desktop */
@@ -53,7 +53,7 @@
 </style>
 
 <!-- Beranda / Hero Section -->
-<section id="beranda" class="position-relative overflow-hidden" style="padding-top: 120px; padding-bottom: 60px;">
+<section id="beranda" class="position-relative overflow-hidden" style="padding-top: 110px; padding-bottom: 60px;">
     <div class="bg-hero-custom text-white py-5 text-center" style="min-height: 800px; padding-bottom: 9rem !important;">
         <div class="container py-4">
 
@@ -69,17 +69,17 @@
             <h2 class="h1 fw-extrabold mb-4" style="color: var(--pk-lime);">
                 Poltekkes Kemenkes Jakarta III
 
-                <p class="lead opacity-75" style="color: var(--pk-gray-bg);">
+                <p class="lead opacity-75" style="color: var(--pk-white-bg); font-size: 1.50rem;">
                     Reservasi tamu online dalam satu platform
                 </p>
         </div>
     </div>
 
     <!-- Overlapping Option Cards -->
-    <div class=" container" style="margin-top: -8.5rem; position: relative; z-index: 5;">
+    <div class=" container" style="margin-top: -15.5rem; position: relative; z-index: 5;">
         <div class="row g-4 justify-content-center">
             <!-- Card 1: Reservasi -->
-            <div class="col-md-6 col-lg-5">
+            <div class="col-md-4 col-lg-3">
                 <div class="card h-100 border-0 rounded-4 shadow-lg p-4 card-overlapping bg-white">
                     <div class="card-body d-flex flex-column justify-content-between p-2">
                         <div>
@@ -96,8 +96,26 @@
                 </div>
             </div>
 
-            <!-- Card 2: Website Instansi -->
-            <div class="col-md-6 col-lg-5">
+            <!-- Card 2: Tutorial Kunjungan -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 rounded-4 shadow-lg p-4 card-overlapping text-white" style="background-color: var(--pk-teal);">
+                    <div class=" card-body d-flex flex-column justify-content-between p-2">
+                        <div>
+                            <div class="rounded-3 d-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px; background-color: var(--pk-white-bg); color: var(--pk-teal);">
+                                <i class="fa-solid fa-play fs-4"></i>
+                            </div>
+                            <h4 class="fw-bold text-white mb-2">Tutorial Kunjungan</h4>
+                            <p class="text-white small">Pelajari langkah-langkah mudah untuk melakukan kunjungan ke Poltekkes Kemenkes Jakarta III.</p>
+                        </div>
+                        <div class="mt-3">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#tutorialModal" class="btn btn-primary rounded-pill px-4 py-2 text-dark" style="background-color: var(--pk-white-bg); border-color: var(--pk-teal);">Mulai Tutorial</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Website Instansi -->
+            <div class="col-md-4 col-lg-3">
                 <div class="card h-100 border-0 rounded-4 shadow-lg p-4 card-overlapping text-dark" style="background-color: var(--pk-lime);">
                     <div class="card-body d-flex flex-column justify-content-between p-2">
                         <div>
@@ -187,3 +205,41 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="tutorialModalLabel" style="color: var(--pk-teal);">Tutorial Kunjungan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
+                    <iframe id="tutorialVideo" src="https://www.youtube.com/embed/zlBgFNwib_Q?si=UwgwMCK4RLORbXt0?rel=0" title="Tutorial Kunjungan" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ambil elemen modal dan iframe
+        const tutorialModal = document.getElementById('tutorialModal');
+        const videoIframe = document.getElementById('tutorialVideo');
+
+        // Simpan URL sumber (src) asli dari iframe
+        const videoSrc = videoIframe.src;
+
+        // Event listener saat modal selesai ditutup
+        tutorialModal.addEventListener('hidden.bs.modal', function() {
+            // Me-reset src iframe akan memaksa video untuk berhenti bermain
+            videoIframe.src = '';
+            videoIframe.src = videoSrc;
+        });
+
+        // (Opsional) Event listener jika ingin video autoplay saat modal dibuka
+        // Pastikan Anda menghapus "?rel=0" dari src awal jika menggunakan ini,
+        // lalu ubah kodenya menjadi: videoIframe.src = videoSrc + "?autoplay=1";
+    });
+</script>

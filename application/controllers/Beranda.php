@@ -16,7 +16,7 @@ class Beranda extends CI_Controller
 	public function index()
 	{
 		$data['website'] = $this->M_settings->get_all_settings();
-		$data['title'] = 'Beranda - Penerimaan Tamu Poltekkes Jkt 3';
+		$data['title'] = 'Penerimaan Tamu - Poltekkes Kemenkes Jakarta III';
 		$data['content'] = 'beranda';
 		$this->load->view('layouts/userlte3', $data);
 	}

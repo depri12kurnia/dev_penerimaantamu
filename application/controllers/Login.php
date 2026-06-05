@@ -29,7 +29,7 @@ class Login extends CI_Controller
 
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Login Tamu - Penerimaan Tamu Poltekkes Jakarta III';
-        $data['content'] = 'Login';
+        $data['content'] = 'login';
         $data['google_login_url'] = $client->createAuthUrl();
 
         $this->load->view('layouts/userlte3', $data);
