@@ -44,6 +44,14 @@ class M_dashboard extends CI_Model
         return $this->db->get()->result();
     }
 
+    public function get_chart_asal_tamu()
+    {
+        $this->db->select('asal_tamu, COUNT(id) as total');
+        $this->db->from('reservations');
+        $this->db->group_by('asal_tamu');
+        return $this->db->get()->result();
+    }
+
     // Data untuk Bar Chart: Total Kunjungan per Bulan (Approved vs Pending vs Rejected) Tahun Ini
     public function get_chart_kunjungan_bulanan()
     {

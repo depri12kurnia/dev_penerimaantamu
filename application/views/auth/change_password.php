@@ -1,82 +1,91 @@
-<!-- <h1><?php echo lang('change_password_heading'); ?></h1>
-
-<div id="infoMessage"><?php echo $message; ?></div>
-
-<?php echo form_open("auth/change_password"); ?>
-
-<p>
-      <?php echo lang('change_password_old_password_label', 'old_password'); ?> <br />
-      <?php echo form_input($old_password); ?>
-</p>
-
-<p>
-      <label for="new_password"><?php echo sprintf(lang('change_password_new_password_label'), $min_password_length); ?></label> <br />
-      <?php echo form_input($new_password); ?>
-</p>
-
-<p>
-      <?php echo lang('change_password_new_password_confirm_label', 'new_password_confirm'); ?> <br />
-      <?php echo form_input($new_password_confirm); ?>
-</p>
-
-<?php echo form_input($user_id); ?>
-<p><?php echo form_submit('submit', lang('change_password_submit_btn')); ?></p>
-
-<?php echo form_close(); ?> -->
-
 <section class="content">
-      <div class="row">
-            <div class="col-md-12">
-                  <div class="card card-info">
-                        <div class="card-header">
-                              <h3 class="card-title">Change Password</h3>
-                        </div>
-                        <?php if (validation_errors()) : ?>
-                              <div class="alert alert-danger">
-                                    <?php echo validation_errors(); ?>
+      <div class="container-fluid">
+            <div class="row">
+                  <!-- Dibuat col-md-6 agar form tidak terlalu lebar dan terlihat proporsional, silakan ganti ke col-md-12 jika ingin memenuhi layar -->
+                  <div class="col-md-6 mx-auto">
+                        <div class="card card-outline card-info shadow-sm">
+                              <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-lock mr-2"></i> Change Password</h3>
                               </div>
-                        <?php endif; ?>
 
-                        <?php if ($this->session->flashdata('message')) : ?>
-                              <div class="alert alert-info">
-                                    <?php echo $this->session->flashdata('message'); ?>
-                              </div>
-                        <?php endif; ?>
+                              <div class="card-body">
+                                    <!-- Notifikasi Validasi Error -->
+                                    <?php if (validation_errors()) : ?>
+                                          <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                                                <h5><i class="icon fas fa-ban"></i> Terjadi Kesalahan!</h5>
+                                                <?php echo validation_errors(); ?>
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                </button>
+                                          </div>
+                                    <?php endif; ?>
 
-                        <?php echo form_open("auth/change_password"); ?>
-                        <div class="card-body">
-                              <div class="form-group">
-                                    <label for="oldPassword">Old Password</label>
-                                    <input type="password" name="oldPassword" id="oldPassword" class="form-control">
-                              </div>
-                              <div class="form-group">
-                                    <label for="newPassword">New Password</label>
-                                    <input type="password" name="newPassword" id="newPassword" class="form-control">
-                              </div>
-                              <div class="form-group">
-                                    <label for="confirmPassword">Confirm Password</label>
-                                    <input type="password" name="confirmPassword" id="confirmPassword" class="form-control">
-                              </div>
-                              <div class="form-group">
-                                    <div class="col-8">
-                                          <div class="icheck-primary">
+                                    <!-- Notifikasi Flashdata Sistem -->
+                                    <?php if ($this->session->flashdata('message')) : ?>
+                                          <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+                                                <h5><i class="icon fas fa-info"></i> Informasi</h5>
+                                                <?php echo $this->session->flashdata('message'); ?>
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                </button>
+                                          </div>
+                                    <?php endif; ?>
+
+                                    <?php echo form_open("auth/change_password"); ?>
+                                    <div class="form-group">
+                                          <label for="oldPassword">Old Password</label>
+                                          <div class="input-group">
+                                                <input type="password" name="oldPassword" id="oldPassword" class="form-control" placeholder="Masukkan password lama" required>
+                                                <div class="input-group-append">
+                                                      <div class="input-group-text"><span class="fas fa-key"></span></div>
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                          <label for="newPassword">New Password</label>
+                                          <div class="input-group">
+                                                <input type="password" name="newPassword" id="newPassword" class="form-control" placeholder="Masukkan password baru" required>
+                                                <div class="input-group-append">
+                                                      <div class="input-group-text"><span class="fas fa-lock"></span></div>
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                          <label for="confirmPassword">Confirm Password</label>
+                                          <div class="input-group">
+                                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Ulangi password baru" required>
+                                                <div class="input-group-append">
+                                                      <div class="input-group-text"><span class="fas fa-lock"></span></div>
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <div class="form-group mt-3">
+                                          <div class="icheck-primary d-inline">
                                                 <input type="checkbox" id="showPassword">
-                                                <label for="showPassword">
+                                                <label for="showPassword" class="font-weight-normal text-muted" style="cursor: pointer;">
                                                       Show Password
                                                 </label>
                                           </div>
                                     </div>
-                              </div>
-                              <div class="row">
-                                    <div class="col-12">
-                                          <input type="submit" value="Change Password" class="btn btn-success float-right">
+
+                                    <hr>
+
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <button type="submit" class="btn btn-success float-right shadow-sm">
+                                                      <i class="fas fa-save mr-1"></i> Change Password
+                                                </button>
+                                          </div>
                                     </div>
+                                    <?php echo form_close(); ?>
                               </div>
+                              <!-- /.card-body -->
                         </div>
-                        <?php echo form_close(); ?>
-                        <!-- /.card-body -->
+                        <!-- /.card -->
                   </div>
-                  <!-- /.card -->
             </div>
       </div>
 </section>
@@ -85,13 +94,9 @@
       $(document).ready(function() {
             $('#showPassword').click(function() {
                   if ($(this).is(':checked')) {
-                        $('#oldPassword').attr('type', 'text');
-                        $('#newPassword').attr('type', 'text');
-                        $('#confirmPassword').attr('type', 'text');
+                        $('#oldPassword, #newPassword, #confirmPassword').attr('type', 'text');
                   } else {
-                        $('#oldPassword').attr('type', 'password');
-                        $('#newPassword').attr('type', 'password');
-                        $('#confirmPassword').attr('type', 'password');
+                        $('#oldPassword, #newPassword, #confirmPassword').attr('type', 'password');
                   }
             });
       });

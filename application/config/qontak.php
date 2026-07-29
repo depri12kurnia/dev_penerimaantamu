@@ -9,5 +9,3 @@ defined('BASEPATH') or exit('No direct script access allowed');
 // Palsu, ganti dengan token akses dan ID saluran yang valid dari akun Qontak Anda
 // $config['qontak_access_token'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 // $config['qontak_channel_id']   = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-
-// asli config qontak.php

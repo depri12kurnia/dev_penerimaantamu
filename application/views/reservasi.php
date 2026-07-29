@@ -93,15 +93,23 @@
             <div class="row g-4 mb-5">
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark small">Asal Tamu *</label>
-                    <select name="asal_tamu" required class="form-select form-select-custom">
+                    <select name="asal_tamu" id="asal_tamu" required class="form-select form-select-custom">
                         <option value="">-- Pilih Asal Instansi --</option>
-                        <option value="Kementerian/Lembaga">Kementerian / Lembaga</option>
+                        <option value="Kementerian/Lembaga">Pemerintah Pusat (Kementerian / Lembaga)</option>
                         <option value="Poltekkes">Poltekkes</option>
                         <option value="Pemerintah Daerah">Pemerintah Daerah</option>
-                        <option value="Universitas/Politeknik/SMA">Universitas / Politeknik / SMA</option>
-                        <option value="Lembaga Non Kementerian">Lembaga Non Kementerian</option>
-                        <option value="Kelompok Masyarakat">Kelompok Masyarakat</option>
+                        <option value="DPRD Provinsi/Kabupaten/Kota">DPRD Provinsi / Kabupaten / Kota</option>
+                        <option value="BUMD Kabupaten/Kota">BUMD Kabupaten/Kota</option>
+                        <option value="Universitas/Politeknik/SMA">Universitas / Politeknik / SMA / SMK</option>
+                        <option value="Akademisi">Akademisi</option>
+                        <option value="Lembaga Non Kementerian">Lembaga Non Pemerintah</option>
+                        <option value="Lainnya" id="asaltamulainnya">Lainnya</option>
                     </select>
+                </div>
+
+                <div class="col-md-6" id="input_lainnya_container" style="display: none;">
+                    <label class="form-label fw-bold text-dark small">Sebutkan Asal Instansi Lainnya *</label>
+                    <input type="text" name="asal_tamu_lainnya" id="asal_tamu_lainnya" class="form-control form-control-custom" placeholder="Isi instansi Anda">
                 </div>
 
                 <div class="col-md-6">
@@ -214,11 +222,10 @@
                     <label class="form-label fw-bold text-dark small">Klasifikasi Tamu *</label>
                     <select name="klasifikasi" required class="form-select form-select-custom">
                         <option value="">-- Pilih Klasifikasi --</option>
-                        <option value="Kementerian/Lembaga">Kementerian / Lembaga</option>
-                        <option value="Poltekkes">Poltekkes</option>
-                        <option value="Pemerintah Daerah">Pemerintah Daerah</option>
-                        <option value="Universitas/Politeknik/SMA">Universitas / Politeknik / SMA</option>
-                        <option value="Kelompok Masyarakat">Kelompok Masyarakat</option>
+                        <option value="Kunjungan Kerja">Kunjungan Kerja</option>
+                        <option value="Studi Tiru/Studi Banding">Studi Tiru / Studi Banding</option>
+                        <option value="Pendidikan/Pelatihan">Pendidikan / Pelatihan</option>
+                        <option value="Kunjungan Lainnya">Kunjungan Lainnya</option>
                     </select>
                 </div>
 
@@ -232,7 +239,7 @@
                     <label class="form-label fw-bold text-dark small">Tanggal Berkunjung *</label>
                     <div id="tanggalWarning" class="alert alert-warning alert-sm mb-2 py-2 px-3" style="display: none; font-size: 0.875rem;">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span id="tanggalWarningText">Tanggal kunjungan minimal 5 hari kerja dari hari ini</span>
+                        <span id="tanggalWarningText">Tanggal kunjungan minimal 3 hari kerja dari hari ini</span>
                     </div>
                     <div id="conflictWarning" class="alert alert-danger alert-sm mb-2 py-2 px-3" style="display: none; font-size: 0.875rem;">
                         <i class="fas fa-calendar-times me-2"></i>
@@ -357,7 +364,7 @@
                         <div class="step-circle step-active">4</div>
                         <div>
                             <h6 class="fw-bold text-dark mb-1">Batas Waktu Layanan</h6>
-                            <p class="text-secondary small mb-0">Reservasi dapat dilakukan <strong>PALING LAMBAT 5 (lima) HARI KERJA</strong> sebelum waktu pelaksanaan kunjungan.</p>
+                            <p class="text-secondary small mb-0">Reservasi dapat dilakukan <strong>PALING LAMBAT 3 (tiga) HARI KERJA</strong> sebelum waktu pelaksanaan kunjungan.</p>
                         </div>
                     </div>
 
@@ -490,7 +497,7 @@
         }
     });
 
-    // Fungsi untuk validasi tanggal berkunjung (minimal 5 hari dari hari ini)
+    // Fungsi untuk validasi tanggal berkunjung (minimal 3 hari dari hari ini)
     function validateTanggalBerkunjung() {
         const tanggalInput = document.getElementById('tanggalBerkunjung');
         const warningDiv = document.getElementById('tanggalWarning');
@@ -501,10 +508,10 @@
             return true; // Field belum diisi
         }
 
-        // Hitung tanggal minimal (hari ini + 5 hari)
+        // Hitung tanggal minimal (hari ini + 3 hari)
         const today = new Date();
         const minimalDate = new Date(today);
-        minimalDate.setDate(minimalDate.getDate() + 5);
+        minimalDate.setDate(minimalDate.getDate() + 3);
 
         // Hapus waktu untuk perbandingan tanggal yang akurat
         selectedDate.setHours(0, 0, 0, 0);
@@ -527,12 +534,31 @@
             tanggalInput.addEventListener('blur', validateTanggalBerkunjung);
         }
     });
+
+    // Panggil fungsi untuk menampilkan input "Lainnya" saat opsi dipilih
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectAsalTamu = document.getElementById("asal_tamu");
+        const containerLainnya = document.getElementById("input_lainnya_container");
+        const inputLainnya = document.getElementById("asal_tamu_lainnya");
+
+        selectAsalTamu.addEventListener("change", function() {
+            // Cek apakah nilai yang dipilih adalah "Lainnya"
+            if (this.value === "Lainnya") {
+                containerLainnya.style.display = "block"; // Tampilkan input
+                inputLainnya.required = true; // Wajib diisi saat submit
+            } else {
+                containerLainnya.style.display = "none"; // Sembunyikan input
+                inputLainnya.required = false; // Matikan wajib diisi
+                inputLainnya.value = ""; // Reset isinya jika pengguna berubah pikiran
+            }
+        });
+    });
 </script>
 <script>
     function submitForm() {
         // Validasi tanggal berkunjung terlebih dahulu
         if (!validateTanggalBerkunjung()) {
-            alert('Tanggal kunjungan minimal harus 5 hari kerja dari hari ini. Silakan pilih tanggal yang sesuai.');
+            alert('Tanggal kunjungan minimal harus 3 hari kerja dari hari ini. Silakan pilih tanggal yang sesuai.');
             return;
         }
 

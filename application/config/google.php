@@ -8,5 +8,3 @@ defined('BASEPATH') or exit('No direct script access allowed');
 // $config['google']['client_id']     = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com';
 // $config['google']['client_secret'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 // $config['google']['redirect_uri']  = base_url('auth/google_callback');
-
-// asli config google.php

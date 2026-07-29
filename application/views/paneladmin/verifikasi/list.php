@@ -465,4 +465,68 @@
         // Buka PDF di tab baru
         window.open(printUrl, '_blank');
     }
+
+    // Kirim Survey
+    function sendSurvey(id, nama_pemohon, nama_instansi) {
+        let csrfName = "<?= $this->security->get_csrf_token_name(); ?>";
+        let csrfToken = $('#csrf_token').val() || '<?= $this->security->get_csrf_hash(); ?>';
+
+        Swal.fire({
+            title: 'Konfirmasi',
+            html: `Apakah Anda yakin ingin mengirimkan survey untuk <b>${nama_pemohon}</b> dari : <b>${nama_instansi}</b> ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Kirim!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Siapkan data yang akan dikirim
+                let postData = {
+                    id: id,
+                    nama_pemohon: nama_pemohon,
+                    nama_instansi: nama_instansi,
+                    kirim_survey: '1'
+                };
+                postData[csrfName] = csrfToken;
+
+                $.ajax({
+                    url: "<?= site_url('admin/verifikasi/ajax_kirim_survey'); ?>",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: postData,
+                    success: function(res) {
+                        // PENTING: Update token CSRF di halaman web Anda setiap kali mendapat respon
+                        if (res.csrf_token) {
+                            $('#csrf_token').val(res.csrf_token); // Update jika pakai input hidden
+                            // Atau jika Anda menggunakan function getCsrfToken, pastikan function tersebut terupdate nilainya
+                        }
+
+                        if (res.status === false) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: res.message,
+                                confirmButtonText: 'Mengerti'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Survey telah dikirim.',
+                                timer: 1500
+                            });
+
+                            table.ajax.reload(function() {
+                                if (typeof updateData === "function") updateData();
+                            }, false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Jika error (termasuk salah CSRF), amankan token baru jika dikirim lewat response header/body
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+    }
 </script>

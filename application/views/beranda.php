@@ -64,10 +64,10 @@
 
             <!-- Headings -->
             <h1 class="display-5 fw-extrabold mb-2">
-                di <span class="border-bottom border-warning border-3">Website Penerimaan Tamu</span>
+                di <span class="border-bottom border-warning border-3">Website <?= htmlspecialchars($website->name) ?></span>
             </h1>
             <h2 class="h1 fw-extrabold mb-4" style="color: var(--pk-lime);">
-                Poltekkes Kemenkes Jakarta III
+                <?= htmlspecialchars($website->company) ?>
 
                 <p class="lead opacity-75" style="color: var(--pk-white-bg); font-size: 1.50rem;">
                     Reservasi tamu online dalam satu platform

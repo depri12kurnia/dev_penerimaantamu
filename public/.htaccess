@@ -1,0 +1,11 @@
+# 1. Matikan daftar isi direktori (Directory Indexing)
+Options -Indexes
+
+# 2. Blokir akses langsung ke semua file di folder ini via URL
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

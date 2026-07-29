@@ -64,8 +64,8 @@ class Verifikasi extends CI_Controller
                 // Jika approve, tambahkan (concatenate) tombol Print ke dalam variabel yang sama
                 // Perhatikan penggunaan .= untuk menyambung string
                 $action_buttons .= ' 
-                                    <a class="btn btn-info btn-sm" href="javascript:void(0)" title="Print" onclick="printReservation(\'' . $verification->id . '\')"><i class="fa fa-print"></i></a>
-                                    <a class="btn btn-success btn-sm" href="javascript:void(0)" title="Kirim Survey" onclick="sendSurvey(\'' . $verification->id . '\',\'' . $verification->nama_pemohon . '\',\'' . $verification->nama_instansi . '\')"><i class="fa fa-clipboard-check"></i></a>
+                                    <a class="btn btn-info btn-sm" href="javascript:void(0)" title="Print" onclick="printReservation(\'' . $verification->id . '\',\'' . $verification->nama_pemohon . '\')"><i class="fa fa-print"></i></a>
+                                    <a class="btn btn-success btn-sm" href="javascript:void(0)" title="Kirim Survey" onclick="sendSurvey(\'' . $verification->id . '\')"><i class="fa fa-clipboard-check"></i></a>
                                 ';
             }
 
@@ -415,111 +415,119 @@ class Verifikasi extends CI_Controller
 
     public function ajax_kirim_survey()
     {
-        // 1. PENTING: Kembalikan validasi CSRF di awal method
+        $id = $this->input->post('id');
+        log_message('debug', 'Verifikasi::ajax_verify POST=' . print_r($_POST, true));
+        log_message('debug', 'Verifikasi::ajax_verify token_name=' . $this->security->get_csrf_token_name() . ' token_value=' . $this->input->post($this->security->get_csrf_token_name()));
+
         $this->validate_csrf();
 
-        $id = $this->input->post('id');
-        $kirim_survey = $this->input->post('kirim_survey');
+        $id      = $this->input->post('id');
+        // Kirim Survey 1 = terkirim, Kirim Survey 0 = Belum Terkirim
+        $kirim_survey  = $this->input->post('kirim_survey');
+        $updated_at = date('Y-m-d H:i:s');
 
-        // Default fallback jika kirim_survey kosong dari view
-        if ($kirim_survey === null) {
-            $kirim_survey = '1';
+        $data = ['kirim_survey' => $kirim_survey, 'updated_at' => $updated_at];
+        if ($kirim_survey === '0') {
+            $data['kirim_survey'] = $kirim_survey;
         }
 
-        $updated_at = date('Y-m-d H:i:s');
-        $data = ['kirim_survey' => $kirim_survey, 'updated_at' => $updated_at];
+        // 1. Jalankan Update Database
+        $this->M_verifikasi->update_reservations($id, $data);
 
-        // 2. Jalankan Update Database terlebih dahulu
-        $update = $this->M_verifikasi->update_reservations($id, $data);
+        // log user activity
+        $user = $this->ion_auth->user()->row();
+        $this->M_log_user->save_log($user->id, "Kirim Survey ID: $id -> $kirim_survey");
 
-        // Inisialisasi status default untuk response
+        // =========================================================================
+        // PROSES INTEGRASI MEKARI QONTAK WHATSAPP
+        // =========================================================================
+
+        $reservation = $this->M_verifikasi->get_reservation_by_id($id);
+
+        $nama_pemohon = $reservation->nama_pemohon; // {{1}}
+        $nama_instansi = $reservation->nama_instansi; // {{2}}
+        $jumlah_peserta = $reservation->jumlah_peserta; // {{3}}
+        $topik = $reservation->topik; // {{4}}
+        $no_ticket = $reservation->no_ticket; // {{5}}
+        $tanggal_berkunjung = $reservation->tanggal_berkunjung; // {{6}}
+        $jam_kunjungan = $reservation->jam_kunjungan; // {{7}}
+        $lokasi = $reservation->lokasi; // {{8}}
+
         $wa_status_sent = false;
         $wa_error_msg   = '';
 
-        if ($update) {
-            // log user activity jika db sukses
-            $user = $this->ion_auth->user()->row();
-            $this->M_log_user->save_log($user->id, "Kirim Survey ID: $id -> $kirim_survey");
+        if ($reservation) {
+            $this->load->library('qontak');
 
-            // =========================================================================
-            // PROSES INTEGRASI MEKARI QONTAK WHATSAPP (Dipindahkan ke dalam kondisi sukses)
-            // =========================================================================
-            $reservation = $this->M_verifikasi->get_reservation_by_id($id);
+            $nomor_mentah = $reservation->nomor_whatsapp;
+            $nomor_bersih = preg_replace('/[^0-9]/', '', $nomor_mentah);
+            $nomor_bersih = str_replace(['o', 'O'], '0', $nomor_bersih);
 
-            if ($reservation) {
-                $this->load->library('qontak');
-
-                $nama_pemohon       = $reservation->nama_pemohon;
-                $nama_instansi      = $reservation->nama_instansi;
-                $tanggal_berkunjung = $reservation->tanggal_berkunjung;
-
-                $nomor_mentah = $reservation->nomor_whatsapp;
-                $nomor_bersih = preg_replace('/[^0-9]/', '', $nomor_mentah);
-                $nomor_bersih = str_replace(['o', 'O'], '0', $nomor_bersih);
-
-                if (substr($nomor_bersih, 0, 1) === '0') {
-                    $nomor_tujuan = '62' . substr($nomor_bersih, 1);
-                } elseif (substr($nomor_bersih, 0, 2) === '62') {
-                    $nomor_tujuan = $nomor_bersih;
-                } elseif (substr($nomor_bersih, 0, 1) === '8') {
-                    $nomor_tujuan = '62' . $nomor_bersih;
-                } else {
-                    $nomor_tujuan = $nomor_bersih;
-                }
-
-                $template_id  = '57b17b94-6500-4ca2-9a77-c27c88819805'; // <-- Ganti dengan ID Asli Qontak Anda
-                $isi_variabel = [
-                    $nama_pemohon,       // {{1}}
-                    $nama_instansi,      // {{2}}
-                    $tanggal_berkunjung, // {{3}}
-                ];
-
-                // Format array variabel agar sesuai standar API Qontak
-                $formatted_parameters = [];
-                foreach ($isi_variabel as $index => $val) {
-                    $formatted_parameters[] = [
-                        "key" => (string)($index + 1),
-                        "value" => "variabel_" . ($index + 1),
-                        "value_text" => (string)$val
-                    ];
-                }
-
-                // Kirim pesan lewat library Qontak
-                $kirim_wa = $this->qontak->send_message(
-                    $nama_pemohon,
-                    $nomor_tujuan,
-                    $template_id,
-                    $formatted_parameters
-                );
-
-                // Cek response JSON dari Qontak
-                if (isset($kirim_wa['status']) && $kirim_wa['status'] === 'success') {
-                    $wa_status_sent = true;
-                } else {
-                    log_message('error', 'Gagal kirim WA via Qontak: ' . json_encode($kirim_wa));
-                    $error_detail = isset($kirim_wa['error']['message']) ? $kirim_wa['error']['message'] : 'Pesan WA gagal terkirim.';
-                    $wa_error_msg = $error_detail;
-                }
+            if (substr($nomor_bersih, 0, 1) === '0') {
+                $nomor_tujuan = '62' . substr($nomor_bersih, 1);
+            } elseif (substr($nomor_bersih, 0, 2) === '62') {
+                $nomor_tujuan = $nomor_bersih;
+            } elseif (substr($nomor_bersih, 0, 1) === '8') {
+                $nomor_tujuan = '62' . $nomor_bersih;
             } else {
-                log_message('error', "Gagal kirim WA: Data reservasi dengan ID $id tidak ditemukan.");
-                $wa_error_msg = 'Data reservasi tidak ditemukan untuk pengiriman WA.';
+                $nomor_tujuan = $nomor_bersih;
             }
-            // =========================================================================
 
-            // Output Sukses
-            echo json_encode([
-                "status"      => TRUE,
-                "wa_sent"     => $wa_status_sent,
-                "wa_message"  => $wa_error_msg,
-                "csrf_token"  => $this->security->get_csrf_hash()
-            ]);
+            $nama_pemohon = $reservation->nama_pemohon;
+
+            $template_id  = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // ID Qontak Template untuk approved
+            $isi_variabel = [
+                $nama_pemohon, // {{1}}
+                $nama_instansi, // {{2}}
+                $jumlah_peserta, // {{3}}
+                $topik, // {{4}}
+                $no_ticket, // {{5}}
+                $tanggal_berkunjung, // {{6}}
+                $jam_kunjungan, // {{7}}
+                $lokasi, // {{8}}
+            ];
+
+
+            // PERBAIKAN: Format array variabel agar sesuai standar API Qontak
+            $formatted_parameters = [];
+            foreach ($isi_variabel as $index => $val) {
+                $formatted_parameters[] = [
+                    "key" => (string)($index + 1), // {{1}}, {{2}}, dst
+                    "value" => "variabel_" . ($index + 1),
+                    "value_text" => (string)$val // Pastikan berbentuk string
+                ];
+            }
+
+            // PERBAIKAN: Pemanggilan disesuaikan dengan urutan parameter di Library
+            // send_message($to_name, $to_number, $template_id, $parameters)
+            $kirim_wa = $this->qontak->send_message(
+                $nama_pemohon,
+                $nomor_tujuan,
+                $template_id,
+                $formatted_parameters
+            );
+
+            // PERBAIKAN: Cek response berdasarkan JSON balasan Qontak
+            if (isset($kirim_wa['status']) && $kirim_wa['status'] === 'success') {
+                $wa_status_sent = true;
+            } else {
+                log_message('error', 'Gagal kirim WA via Qontak: ' . json_encode($kirim_wa));
+                // Opsional: Ambil pesan error spesifik dari Qontak jika ada
+                $error_detail = isset($kirim_wa['error']['message']) ? $kirim_wa['error']['message'] : 'Pesan WA gagal terkirim.';
+                $wa_error_msg = $error_detail;
+            }
         } else {
-            // Output Gagal Update DB
-            echo json_encode([
-                "status"      => FALSE,
-                "message"     => "Gagal mengupdate data ke database.",
-                "csrf_token"  => $this->security->get_csrf_hash()
-            ]);
+            log_message('error', "Gagal kirim WA: Data reservasi dengan ID $id tidak ditemukan.");
+            $wa_error_msg = 'Data reservasi tidak ditemukan untuk pengiriman WA.';
         }
+
+        // =========================================================================
+
+        echo json_encode([
+            "status"      => TRUE,
+            "wa_sent"     => $wa_status_sent,
+            "wa_message"  => $wa_error_msg,
+            "csrf_token"  => $this->security->get_csrf_hash()
+        ]);
     }
 }

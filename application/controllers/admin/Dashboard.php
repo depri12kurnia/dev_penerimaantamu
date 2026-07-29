@@ -81,6 +81,27 @@ class Dashboard extends CI_Controller
             ]
         ]);
 
+        // --- 3. PROSES DATA BAR CHART (ASAL TAMU) ---
+        $data_asal_tamu = $this->M_dashboard->get_chart_asal_tamu();
+        $asal_labels = [];
+        $asal_data   = [];
+        $asal_colors = ['#17a2b8', '#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#6f42c1', '#e83e8c', '#fd7e14'];
+
+        foreach ($data_asal_tamu as $row) {
+            $asal_labels[] = !empty($row->asal_tamu) ? $row->asal_tamu : 'Lainnya / Tidak Diisi';
+            $asal_data[]   = (int)$row->total;
+        }
+
+        // Variabel dipisah menjadi bar_chart_asal_tamu
+        $data['bar_chart_asal_tamu'] = json_encode([
+            'labels' => $asal_labels,
+            'datasets' => [[
+                'label'           => 'Jumlah Tamu',
+                'backgroundColor' => array_slice($asal_colors, 0, count($asal_data)),
+                'data'            => $asal_data
+            ]]
+        ]);
+
         $data['website'] = $this->M_settings->get_all_settings();
         $data['title'] = 'Dashboard | Admin Panel';
         $data['content'] = 'paneladmin/dashboard';

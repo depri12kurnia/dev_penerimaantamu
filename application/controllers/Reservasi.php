@@ -65,6 +65,7 @@ class Reservasi extends CI_Controller
             'topik' => $this->input->post('topik'),
             'alamat_hotel' => $this->input->post('alamat_hotel'),
             'status' => 'pending',
+            'kirim_survey' => 0,
             'no_ticket' => $no_ticket
         ];
 
@@ -79,7 +80,7 @@ class Reservasi extends CI_Controller
             $config['upload_path'] = $upload_path;
             $config['allowed_types'] = 'jpg|jpeg|png|pdf';
             $config['max_size'] = 3072; // 3MB
-            $config['encrypt_name'] = TRUE;
+            $config['encrypt_name'] = 'Tamu-' . date('YmdHis') . '-' . rand(1000, 9999);
 
             $this->load->library('upload', $config);
 
@@ -125,7 +126,7 @@ class Reservasi extends CI_Controller
         if ($insert_id) {
             $this->load->library('qontak');
 
-            $nomor_admin = '6281220094931'; // Nomor WA Admin Penerimaan Reservasi Tamu (gunakan format internasional tanpa tanda +)
+            $nomor_admin = '6281113102256'; // Nomor WA Admin Penerimaan Reservasi Tamu (gunakan format internasional tanpa tanda +)
             $nama_admin  = 'Admin Penerimaan Reservasi Tamu'; // Nama penerima di sistem Qontak
 
             // Ambil data langsung dari $payload dan pastikan tidak kosong (fallback '-')
